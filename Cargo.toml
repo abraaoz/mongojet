@@ -9,12 +9,12 @@ name = "mongojet"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.28", features = ["full", "generate-import-lib"] }
+pyo3 = { version = "0.29", features = ["full", "generate-import-lib"] }
 pyo3-log = { version = ">=0.13.3, <0.14" }
 tokio = { version = "1.45", features = ["full"] }
 futures = "0.3"
 
-mongodb = { version = "~3.6", features = ["sync", "bson-3"] }
+mongodb = { version = "~3.8", features = ["sync", "bson-3"] }
 bson = { version = "3", features = ["chrono-0_4"] }
 chrono = { version = "0.4", features = ["serde"] }
 chrono-tz = "0.10"
