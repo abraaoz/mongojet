@@ -5,7 +5,7 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 try:
-    from typing import Unpack
+    from typing import Unpack  # type:ignore[attr-defined]
 except ImportError:
     from typing_extensions import Unpack
 

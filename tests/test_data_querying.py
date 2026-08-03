@@ -1,6 +1,5 @@
 import itertools
 import re
-from typing import Any
 
 import pytest
 from bson import SON
@@ -18,9 +17,8 @@ async def test_find_one(db: Database) -> None:
     doc = await collection.find_one({"_id": inserted_id})
     assert doc == inserted_doc
 
-    doc: dict[str, Any] = await collection.find_one(
-        {"_id": inserted_id}, projection={"a": 1}
-    )
+    doc = await collection.find_one({"_id": inserted_id}, projection={"a": 1})
+    assert doc is not None
     assert "a" in doc
     assert "b" not in doc
 

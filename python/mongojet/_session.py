@@ -6,12 +6,12 @@ from typing import Any
 from bson import CodecOptions
 
 try:
-    from typing import Unpack
+    from typing import Unpack  # type:ignore[attr-defined]
 except ImportError:
     from typing_extensions import Unpack
 
 try:
-    from typing import Self
+    from typing import Self  # type:ignore[attr-defined]
 except ImportError:
     from typing_extensions import Self
 

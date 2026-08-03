@@ -8,7 +8,7 @@ from bson import CodecOptions
 from .mongojet import core_create_client
 
 try:
-    from typing import Unpack
+    from typing import Unpack  # type:ignore[attr-defined]
 except ImportError:
     from typing_extensions import Unpack
 

@@ -11,12 +11,12 @@ from typing import (
 )
 
 try:
-    from typing import Required
+    from typing import Required  # type:ignore[attr-defined]
 except ImportError:
     from typing_extensions import Required
 
 try:
-    from typing import Unpack
+    from typing import Unpack  # type:ignore[attr-defined]
 except ImportError:
     from typing_extensions import Unpack
 
