@@ -7,7 +7,7 @@ async def get_index_by_name(c: Collection, name: str) -> IndexModelDef:
     indexes = [i for i in indexes if i["name"] == name]
     if indexes:
         return indexes[0]
-    return None # type:ignore[return-value]
+    return None  # type:ignore[return-value]
 
 
 @pytest.mark.asyncio

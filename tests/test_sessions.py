@@ -40,7 +40,7 @@ async def test_transaction_find(db: Database) -> None:
 
 
 @pytest.mark.asyncio
-async def test_transaction_aggregate(db: Database)->None:
+async def test_transaction_aggregate(db: Database) -> None:
     collection = db["test_transaction_aggregate"]
     session = await db.client.start_session()
 

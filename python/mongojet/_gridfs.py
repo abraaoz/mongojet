@@ -8,7 +8,7 @@ from .mongojet import DuplicateKeyError, FileExists
 
 
 class GridfsBucket:
-    def __init__(self, core_bucket: Any, codec_options: CodecOptions)->None:
+    def __init__(self, core_bucket: Any, codec_options: CodecOptions) -> None:
         self._core_bucket = core_bucket
         self._codec = Codec(codec_options)
 
