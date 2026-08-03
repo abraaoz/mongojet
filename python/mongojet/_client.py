@@ -1,28 +1,30 @@
-from typing import Optional
+from __future__ import annotations
+
 import warnings
+from typing import Any
 
 from bson import CodecOptions
 
-from .mongojet import core_create_client  # pylint:disable=no-name-in-module
+from .mongojet import core_create_client
 
 try:
-    from typing import Unpack  # pylint:disable=ungrouped-imports
+    from typing import Unpack
 except ImportError:
     from typing_extensions import Unpack
 
-from ._database import Database
-from ._types import DatabaseOptions, SessionOptions
 from ._codec import Codec
+from ._database import Database
 from ._session import ClientSession
+from ._types import DatabaseOptions, SessionOptions
 
 
-async def create_client(url: str, tz_aware: bool = True) -> 'Client':
+async def create_client(url: str, tz_aware: bool = True) -> Client:  # noqa: FBT001, FBT002
     core_client = await core_create_client(url=url)
     return Client(core_client, codec_options=CodecOptions(tz_aware=tz_aware))
 
 
 class Client:
-    def __init__(self, core_client, codec_options: CodecOptions) -> None:
+    def __init__(self, core_client: Any, codec_options: CodecOptions) -> None:
         self._codec_options = codec_options
         self._codec = Codec(options=codec_options)
         self._core_client = core_client
@@ -30,12 +32,12 @@ class Client:
 
     def get_default_database(
         self,
-        codec_options: Optional[CodecOptions] = None,
+        codec_options: CodecOptions | None = None,
         **options: Unpack[DatabaseOptions],
     ) -> Database:
         default_database = self._core_client.default_database_name
         if default_database is None:
-            raise ValueError('No default database name defined or provided.')
+            raise ValueError("No default database name defined or provided.")
 
         if options:
             core_database = self._core_client.get_database_with_options(
@@ -53,8 +55,8 @@ class Client:
 
     def get_database(
         self,
-        name: Optional[str] = None,
-        codec_options: Optional[CodecOptions] = None,
+        name: str | None = None,
+        codec_options: CodecOptions | None = None,
         **options: Unpack[DatabaseOptions],
     ) -> Database:
         if name is None:
@@ -83,7 +85,7 @@ class Client:
             codec_options=self._codec_options,
         )
 
-    async def close(self, immediate=True):
+    async def close(self, immediate: bool = True) -> None:  # noqa: FBT001, FBT002
         # if self._closing:
         #     return
         self._closing = True
@@ -92,9 +94,13 @@ class Client:
         else:
             await self._core_client.shutdown()
 
-    def __del__(self):
+    def __del__(self) -> None:
         if not self._closing:
-            warnings.warn(f"Unclosed mongojet client {self!r}", ResourceWarning)
+            warnings.warn(
+                f"Unclosed mongojet client {self!r}",
+                ResourceWarning,
+                stacklevel=2,
+            )
             # asyncio.create_task(self.close())
 
     def __getitem__(self, name: str) -> Database:

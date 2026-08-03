@@ -2,13 +2,13 @@ from typing import Any, Optional
 
 from bson import CodecOptions
 
-from .mongojet import FileExists, DuplicateKeyError
 from ._codec import Codec
 from ._types import GridFsPutResult
+from .mongojet import DuplicateKeyError, FileExists
 
 
 class GridfsBucket:
-    def __init__(self, core_bucket, codec_options: CodecOptions):
+    def __init__(self, core_bucket: Any, codec_options: CodecOptions)->None:
         self._core_bucket = core_bucket
         self._codec = Codec(codec_options)
 
@@ -22,9 +22,9 @@ class GridfsBucket:
 
         options = {}
         if filename:
-            options['filename'] = filename
+            options["filename"] = filename
         if file_id:
-            options['file_id'] = file_id
+            options["file_id"] = file_id
 
         try:
             result = await self._core_bucket.put(
@@ -38,13 +38,13 @@ class GridfsBucket:
             return self._codec.decode(result)
 
     async def get_by_id(self, file_id: Any) -> bytes:
-        options = {'file_id': file_id}
+        options = {"file_id": file_id}
         return await self._core_bucket.get_by_id(self._codec.encode(options))
 
     async def get_by_name(self, filename: Any) -> bytes:
-        options = {'filename': filename}
+        options = {"filename": filename}
         return await self._core_bucket.get_by_name(self._codec.encode(options))
 
     async def delete(self, file_id: Any) -> None:
-        options = {'file_id': file_id}
+        options = {"file_id": file_id}
         await self._core_bucket.delete(self._codec.encode(options))

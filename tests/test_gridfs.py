@@ -1,19 +1,18 @@
 import pytest
 from bson import ObjectId
-
-from mongojet import Database, NoFile, FileExists, GridfsBucket
+from mongojet import Database, FileExists, GridfsBucket, NoFile
 
 
 @pytest.mark.asyncio
-async def test_gridfs(db: Database):
+async def test_gridfs(db: Database) -> None:
     bucket: GridfsBucket = db.gridfs_bucket(bucket_name="files")
 
     file_id = ObjectId()
-    file_name = 'some name'
-    file_data = b'file content'
+    file_name = "some name"
+    file_data = b"file content"
 
     res = await bucket.put(data=file_data, filename=file_name, file_id=file_id)
-    assert res['file_id'] == file_id
+    assert res["file_id"] == file_id
 
     data = await bucket.get_by_id(file_id=file_id)
     assert data == file_data
@@ -25,7 +24,7 @@ async def test_gridfs(db: Database):
         await bucket.get_by_id(file_id=ObjectId())
 
     with pytest.raises(NoFile):
-        await bucket.get_by_name(filename='qqqqqqqqqqq')
+        await bucket.get_by_name(filename="qqqqqqqqqqq")
 
     with pytest.raises(FileExists):
         await bucket.put(data=file_data, filename=file_name, file_id=file_id)

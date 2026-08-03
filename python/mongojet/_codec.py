@@ -1,18 +1,35 @@
-from typing import Any, Dict, Optional, Mapping
+from __future__ import annotations
+
+from collections.abc import Mapping
+from typing import Any, overload
 
 import bson
 from bson import CodecOptions
 
 
 class Codec:
-    def __init__(self, options: CodecOptions):
+    def __init__(self, options: CodecOptions) -> None:
         self._options = options
+
+    @overload
+    def encode(
+        self,
+        doc: Mapping[str, Any],
+        optional: bool = True,  # noqa: FBT001, FBT002
+    ) -> bytes: ...
+
+    @overload
+    def encode(
+        self,
+        doc: None,
+        optional: bool = True,  # noqa: FBT001, FBT002
+    ) -> None: ...
 
     def encode(
         self,
-        doc: Optional[Mapping[str, Any]],
-        optional=True,
-    ) -> Optional[bytes]:
+        doc: Mapping[str, Any] | None,
+        optional: bool = True,  # noqa: FBT001, FBT002
+    ) -> bytes | None:
         if doc is None:
             return None
 
@@ -23,10 +40,13 @@ class Codec:
         # return bson.BSON.encode(doc, codec_options=self._options)
         return bson.encode(doc, codec_options=self._options)
 
-    def decode(
-        self,
-        data: Optional[bytes],
-    ) -> Optional[Dict[str, Any]]:
+    @overload
+    def decode(self, data: bytes) -> dict[str, Any]: ...
+
+    @overload
+    def decode(self, data: None) -> None: ...
+
+    def decode(self, data: bytes | None) -> dict[str, Any] | None:
         if data is None:
             return None
 

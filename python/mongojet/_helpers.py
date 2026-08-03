@@ -1,11 +1,12 @@
+# ruff:noqa:RET505
 """
-Copied from `pymongo.helpers`
+Copied from `pymongo.helpers_shared`
 """
 
 from __future__ import annotations
 
 from collections import abc
-from typing import Union, Sequence, Mapping, Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 try:
     from typing import Unpack
@@ -15,18 +16,13 @@ except ImportError:
 from bson import SON
 
 if TYPE_CHECKING:
-    from ._types import IndexList, IndexKeys, IndexOptionsDef, IndexModelDef
+    from ._types import IndexKeys, IndexList, IndexModelDef, IndexOptionsDef
+
 
 ASCENDING = 1
 """Ascending sort order."""
 DESCENDING = -1
 """Descending sort order."""
-
-# _Sort = Union[
-#     Sequence[Union[str, Tuple[str, Union[int, str, Mapping[str, Any]]]]],
-#     Mapping[str, Any],
-# ]
-# _Hint = Union[str, _Sort]
 
 
 def create_index_model(
@@ -34,21 +30,21 @@ def create_index_model(
     **kwargs: Unpack[IndexOptionsDef],
 ) -> IndexModelDef:
     # fix arg types
-    if 'expireAfterSeconds' in kwargs:
-        kwargs['expireAfterSeconds'] = int(kwargs.pop('expireAfterSeconds'))
+    if "expireAfterSeconds" in kwargs:
+        kwargs["expireAfterSeconds"] = int(kwargs.pop("expireAfterSeconds"))  # type:ignore[arg-type,misc]
 
     # fix key names
-    if 'sphere2dIndexVersion' in kwargs:
-        kwargs['2dsphereIndexVersion'] = kwargs.pop('sphere2dIndexVersion')
+    if "sphere2dIndexVersion" in kwargs:
+        kwargs["2dsphereIndexVersion"] = kwargs.pop("sphere2dIndexVersion")  # type: ignore[typeddict-item]
 
     keys = _index_list(key_or_list)
 
-    if kwargs.get('name') is None:
-        kwargs['name'] = _gen_index_name(keys)
+    if kwargs.get("name") is None:
+        kwargs["name"] = _gen_index_name(keys)
 
-    index_model = {'key': _index_document(keys), **kwargs}
+    index_model = {"key": _index_document(keys), **kwargs}
 
-    return index_model  # type:ignore
+    return index_model  # type: ignore[return-value]
 
 
 def _gen_index_name(keys: IndexList) -> str:
@@ -57,8 +53,9 @@ def _gen_index_name(keys: IndexList) -> str:
 
 
 def _index_list(
-    key_or_list: IndexKeys, direction: Optional[Union[int, str]] = None
-) -> Sequence[tuple[str, Union[int, str, Mapping[str, Any]]]]:
+    key_or_list: IndexKeys,
+    direction: int | str | None = None,
+) -> abc.Sequence[tuple[str, int | str | abc.Mapping[str, Any]]]:
     """Helper to generate a list of (key, direction) pairs.
 
     Takes such a list, or a single key, or a single key and direction.

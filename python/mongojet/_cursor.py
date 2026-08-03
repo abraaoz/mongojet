@@ -1,25 +1,33 @@
-import collections
-from typing import TypeVar, AsyncIterator, List
+from __future__ import annotations
+
+from collections import deque
+from collections.abc import AsyncIterator
+from typing import Any, TypeVar
 
 from bson import CodecOptions
 
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
+
 from ._codec import Codec
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Cursor(AsyncIterator[T]):
-    def __init__(self, core_cursor, codec_options: CodecOptions):
+    def __init__(self, core_cursor: Any, codec_options: CodecOptions) -> None:
         self._core_cursor = core_cursor
         self._codec = Codec(options=codec_options)
-        self._buff = collections.deque()
+        self._buff: deque[T] = deque()
 
-    def __aiter__(self):
+    def __aiter__(self) -> Self:
         return self
 
     async def __anext__(self) -> T:
         if not self._buff:
-            data = await self._core_cursor.next_batch()
+            data: bytes = await self._core_cursor.next_batch()
             if not data:
                 raise StopAsyncIteration
 
@@ -36,10 +44,10 @@ class Cursor(AsyncIterator[T]):
 
         return self._buff.popleft()
 
-    async def to_list(self, length=None) -> List[T]:
+    async def to_list(self, length: int | None = None) -> list[T]:
         if length is not None:
             raise ValueError(
-                'Only None value is supported for partial compatibility with Motor API'
+                "Only None value is supported for partial compatibility with Motor API"
             )
         data = await self._core_cursor.collect()
         doc = self._codec.decode(data)

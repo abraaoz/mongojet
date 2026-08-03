@@ -1,8 +1,8 @@
-# pylint:disable=redefined-builtin
+# ruff: noqa: A001,A002
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Optional, List, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 try:
     from typing import Unpack
@@ -11,42 +11,42 @@ except ImportError:
 
 from bson import CodecOptions, ObjectId
 
-from ._session import ClientSession
-from ._cursor import Cursor
 from ._codec import Codec
+from ._cursor import Cursor
+from ._session import ClientSession
 from ._types import (
-    Document,
-    FindOptions,
-    FindOneOptions,
     AggregateOptions,
-    UpdateOptions,
-    InsertOneOptions,
-    InsertManyOptions,
-    InsertOneResult,
-    UpdateResult,
-    InsertManyResult,
-    DeleteResult,
-    IndexKeys,
-    IndexModel,
+    CountOptions,
     CreateIndexArgs,
+    CreateIndexesResult,
     CreateIndexOptions,
     CreateIndexResult,
-    CreateIndexesResult,
-    DropIndexOptions,
-    ListIndexesOptions,
-    IndexModelDef,
-    ReplaceOptions,
     DeleteOptions,
-    CountOptions,
-    EstimatedCountOptions,
-    FindOneAndUpdateOptions,
-    FindOneAndReplaceOptions,
-    FindOneAndDeleteOptions,
-    DropCollectionOptions,
-    ReadPreference,
-    WriteConcern,
-    ReadConcern,
+    DeleteResult,
     DistinctOptions,
+    Document,
+    DropCollectionOptions,
+    DropIndexOptions,
+    EstimatedCountOptions,
+    FindOneAndDeleteOptions,
+    FindOneAndReplaceOptions,
+    FindOneAndUpdateOptions,
+    FindOneOptions,
+    FindOptions,
+    IndexKeys,
+    IndexModel,
+    IndexModelDef,
+    InsertManyOptions,
+    InsertManyResult,
+    InsertOneOptions,
+    InsertOneResult,
+    ListIndexesOptions,
+    ReadConcern,
+    ReadPreference,
+    ReplaceOptions,
+    UpdateOptions,
+    UpdateResult,
+    WriteConcern,
 )
 
 if TYPE_CHECKING:
@@ -57,10 +57,10 @@ if TYPE_CHECKING:
 class Collection:
     def __init__(
         self,
-        core_collection,
+        core_collection: Any,
         codec_options: CodecOptions,
         database: Database,
-    ):
+    ) -> None:
         self._database = database
         self._codec_options = codec_options
         self._codec = Codec(options=codec_options)
@@ -68,12 +68,12 @@ class Collection:
 
     async def find_one(
         self,
-        filter: Optional[Union[Document, str]] = None,
-        session: Optional[ClientSession] = None,
+        filter: Document | str | None = None,
+        session: ClientSession | None = None,
         **options: Unpack[FindOneOptions],
-    ) -> Document:
+    ) -> Document | None:
         if filter is not None and not isinstance(filter, Mapping):
-            filter = {'_id': filter}
+            filter = {"_id": filter}
 
         filter = self._codec.encode(filter)
         options = self._codec.encode(options)
@@ -92,16 +92,16 @@ class Collection:
     async def find_one_and_update(
         self,
         filter: Document,
-        update: Union[Document, Sequence[Document]],
-        session: Optional[ClientSession] = None,
+        update: Document | Sequence[Document],
+        session: ClientSession | None = None,
         **options: Unpack[FindOneAndUpdateOptions],
-    ) -> Document:
+    ) -> Document | None:
         filter = self._codec.encode(filter, optional=False)
 
         if isinstance(update, Sequence):
-            update = [self._codec.encode(doc) for doc in update]
+            update = [self._codec.encode(doc) for doc in update]  # type:ignore[misc]
         else:
-            update = self._codec.encode(update, optional=False)
+            update = self._codec.encode(update, optional=False)  # type:ignore[assignment]
 
         options = self._codec.encode(options)
 
@@ -125,9 +125,9 @@ class Collection:
         self,
         filter: Document,
         replacement: Document,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[FindOneAndReplaceOptions],
-    ) -> Document:
+    ) -> Document | None:
         filter = self._codec.encode(filter, optional=False)
         replacement = self._codec.encode(replacement, optional=False)
         options = self._codec.encode(options)
@@ -151,9 +151,9 @@ class Collection:
     async def find_one_and_delete(
         self,
         filter: Document,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[FindOneAndDeleteOptions],
-    ) -> Document:
+    ) -> Document | None:
         filter = self._codec.encode(filter, optional=False)
         options = self._codec.encode(options)
 
@@ -173,8 +173,8 @@ class Collection:
 
     async def find(
         self,
-        filter: Optional[Document] = None,
-        session: Optional[ClientSession] = None,
+        filter: Document | None = None,
+        session: ClientSession | None = None,
         **options: Unpack[FindOptions],
     ) -> Cursor[Document]:
         filter = self._codec.encode(filter)
@@ -192,10 +192,10 @@ class Collection:
 
     async def find_many(
         self,
-        filter: Optional[Document] = None,
-        session: Optional[ClientSession] = None,
+        filter: Document | None = None,
+        session: ClientSession | None = None,
         **options: Unpack[FindOptions],
-    ) -> List[Document]:
+    ) -> list[Document]:
         filter = self._codec.encode(filter)
         options = self._codec.encode(options)
 
@@ -214,7 +214,7 @@ class Collection:
     async def aggregate(
         self,
         pipeline: Sequence[Document],
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[AggregateOptions],
     ) -> Cursor[Document]:
         pipeline = [self._codec.encode(doc) for doc in pipeline]
@@ -234,16 +234,16 @@ class Collection:
     async def update_one(
         self,
         filter: Document,
-        update: Union[Document, Sequence[Document]],
-        session: Optional[ClientSession] = None,
+        update: Document | Sequence[Document],
+        session: ClientSession | None = None,
         **options: Unpack[UpdateOptions],
     ) -> UpdateResult:
         filter = self._codec.encode(filter, optional=False)
 
         if isinstance(update, Sequence):
-            update = [self._codec.encode(doc) for doc in update]
+            update = [self._codec.encode(doc) for doc in update]  # type:ignore[misc]
         else:
-            update = self._codec.encode(update, optional=False)
+            update = self._codec.encode(update, optional=False)  # type:ignore[assignment]
 
         options = self._codec.encode(options)
 
@@ -265,16 +265,16 @@ class Collection:
     async def update_many(
         self,
         filter: Document,
-        update: Union[Document, Sequence[Document]],
-        session: Optional[ClientSession] = None,
+        update: Document | Sequence[Document],
+        session: ClientSession | None = None,
         **options: Unpack[UpdateOptions],
     ) -> UpdateResult:
         filter = self._codec.encode(filter, optional=False)
 
         if isinstance(update, Sequence):
-            update = [self._codec.encode(doc) for doc in update]
+            update = [self._codec.encode(doc) for doc in update]  # type:ignore[misc]
         else:
-            update = self._codec.encode(update, optional=False)
+            update = self._codec.encode(update, optional=False)  # type:ignore[assignment]
 
         options = self._codec.encode(options)
 
@@ -296,12 +296,12 @@ class Collection:
     async def insert_one(
         self,
         document: Document,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[InsertOneOptions],
     ) -> InsertOneResult:
 
-        if '_id' not in document:
-            document['_id'] = ObjectId()
+        if "_id" not in document:
+            document["_id"] = ObjectId()
 
         document = self._codec.encode(document, optional=False)
         options = self._codec.encode(options)
@@ -322,14 +322,14 @@ class Collection:
 
     async def insert_many(
         self,
-        documents: List[Document],
-        session: Optional[ClientSession] = None,
+        documents: list[Document],
+        session: ClientSession | None = None,
         **options: Unpack[InsertManyOptions],
     ) -> InsertManyResult:
 
         for document in documents:
-            if '_id' not in document:
-                document['_id'] = ObjectId()
+            if "_id" not in document:
+                document["_id"] = ObjectId()
 
         documents = [self._codec.encode(doc) for doc in documents]
         options = self._codec.encode(options)
@@ -352,7 +352,7 @@ class Collection:
         self,
         filter: Document,
         replacement: Document,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[ReplaceOptions],
     ) -> UpdateResult:
         filter = self._codec.encode(filter, optional=False)
@@ -378,7 +378,7 @@ class Collection:
     async def delete_one(
         self,
         filter: Document,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[DeleteOptions],
     ) -> DeleteResult:
         filter = self._codec.encode(filter, optional=False)
@@ -401,7 +401,7 @@ class Collection:
     async def delete_many(
         self,
         filter: Document,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[DeleteOptions],
     ) -> DeleteResult:
         filter = self._codec.encode(filter, optional=False)
@@ -423,8 +423,8 @@ class Collection:
 
     async def count_documents(
         self,
-        filter: Optional[Document] = None,
-        session: Optional[ClientSession] = None,
+        filter: Document | None = None,
+        session: ClientSession | None = None,
         **options: Unpack[CountOptions],
     ) -> int:
         filter = self._codec.encode(filter)
@@ -456,10 +456,10 @@ class Collection:
     async def distinct(
         self,
         field_name: str,
-        filter: Optional[Document] = None,
-        session: Optional[ClientSession] = None,
+        filter: Document | None = None,
+        session: ClientSession | None = None,
         **options: Unpack[DistinctOptions],
-    ) -> List[Any]:
+    ) -> list[Any]:
         filter = self._codec.encode(filter)
         options = self._codec.encode(options)
 
@@ -478,18 +478,18 @@ class Collection:
             )
 
         result = self._codec.decode(data)
-        return result['values']
+        return result["values"]
 
     async def create_index(
         self,
         keys: IndexKeys,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[CreateIndexArgs],
     ) -> CreateIndexResult:
 
-        options = {}
+        options: dict[str, Any] = {}
         if "maxTimeMS" in kwargs:
-            options["maxTimeMS"] = int(kwargs.pop("maxTimeMS"))
+            options["maxTimeMS"] = int(kwargs.pop("maxTimeMS"))  # type: ignore[arg-type]
         if "comment" in kwargs:
             options["comment"] = kwargs.pop("comment")
         if "writeConcern" in kwargs:
@@ -497,7 +497,7 @@ class Collection:
         if "commitQuorum" in kwargs:
             options["commitQuorum"] = kwargs.pop("commitQuorum")
 
-        model = IndexModel(keys, **kwargs)
+        model = IndexModel(keys, **kwargs)  # type: ignore[misc]
 
         if session is None:
             result = await self._core_collection.create_index(
@@ -516,7 +516,7 @@ class Collection:
     async def create_indexes(
         self,
         indexes: Sequence[IndexModel],
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[CreateIndexOptions],
     ) -> CreateIndexesResult:
 
@@ -540,7 +540,7 @@ class Collection:
     async def drop_index(
         self,
         name: str,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[DropIndexOptions],
     ) -> None:
 
@@ -560,7 +560,7 @@ class Collection:
 
     async def drop_indexes(
         self,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[DropIndexOptions],
     ) -> None:
 
@@ -578,9 +578,9 @@ class Collection:
 
     async def list_indexes(
         self,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[ListIndexesOptions],
-    ) -> List[IndexModelDef]:
+    ) -> list[IndexModelDef]:
 
         options = self._codec.encode(kwargs)
 
@@ -598,7 +598,7 @@ class Collection:
 
     async def drop(
         self,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[DropCollectionOptions],
     ) -> None:
 
@@ -615,17 +615,17 @@ class Collection:
             )
 
     @property
-    def read_preference(self) -> Optional[ReadPreference]:
+    def read_preference(self) -> ReadPreference | None:
         data = self._core_collection.read_preference()
         return self._codec.decode(data)
 
     @property
-    def write_concern(self) -> Optional[WriteConcern]:
+    def write_concern(self) -> WriteConcern | None:
         data = self._core_collection.write_concern()
         return self._codec.decode(data)
 
     @property
-    def read_concern(self) -> Optional[ReadConcern]:
+    def read_concern(self) -> ReadConcern | None:
         data = self._core_collection.read_concern()
         return self._codec.decode(data)
 

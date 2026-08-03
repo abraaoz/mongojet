@@ -68,6 +68,8 @@ docs/_build/
 # VSCode
 .vscode/
 
+.zed/
+
 # Pyenv
 .python-version
 
@@ -77,3 +79,4 @@ build.sh
 build2.sh
 
 .benchmarks/
+ci.md

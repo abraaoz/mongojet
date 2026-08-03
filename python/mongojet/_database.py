@@ -1,6 +1,8 @@
+# ruff: noqa: A001,A002
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING, Sequence
+from collections.abc import Sequence
+from typing import TYPE_CHECKING, Any
 
 try:
     from typing import Unpack
@@ -9,24 +11,24 @@ except ImportError:
 
 from bson import CodecOptions
 
-from ._collection import Collection
-from ._types import (
-    CollectionOptions,
-    CreateCollectionOptions,
-    Document,
-    ListCollectionsOptions,
-    CollectionSpecification,
-    RunCommandOptions,
-    AggregateOptions,
-    GridFsBucketOptions,
-    ReadPreference,
-    WriteConcern,
-    ReadConcern,
-    DropDatabaseOptions,
-)
 from ._codec import Codec
+from ._collection import Collection
 from ._cursor import Cursor
 from ._gridfs import GridfsBucket
+from ._types import (
+    AggregateOptions,
+    CollectionOptions,
+    CollectionSpecification,
+    CreateCollectionOptions,
+    Document,
+    DropDatabaseOptions,
+    GridFsBucketOptions,
+    ListCollectionsOptions,
+    ReadConcern,
+    ReadPreference,
+    RunCommandOptions,
+    WriteConcern,
+)
 
 if TYPE_CHECKING:
     from ._client import Client
@@ -35,7 +37,12 @@ if TYPE_CHECKING:
 
 # noinspection PyShadowingBuiltins
 class Database:
-    def __init__(self, core_database, codec_options: CodecOptions, client: Client):
+    def __init__(
+        self,
+        core_database: Any,
+        codec_options: CodecOptions,
+        client: Client,
+    ) -> None:
         self._client = client
         self._core_database = core_database
         self._codec = Codec(options=codec_options)
@@ -44,7 +51,7 @@ class Database:
     def get_collection(
         self,
         name: str,
-        codec_options: Optional[CodecOptions] = None,
+        codec_options: CodecOptions | None = None,
         **options: Unpack[CollectionOptions],
     ) -> Collection:
 
@@ -64,7 +71,7 @@ class Database:
     async def create_collection(
         self,
         name: str,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[CreateCollectionOptions],
     ) -> None:
 
@@ -84,8 +91,8 @@ class Database:
 
     async def list_collections(
         self,
-        filter: Optional[Document] = None,
-        session: Optional[ClientSession] = None,
+        filter: Document | None = None,
+        session: ClientSession | None = None,
         **options: Unpack[ListCollectionsOptions],
     ) -> Sequence[CollectionSpecification]:
         filter = self._codec.encode(filter)
@@ -105,7 +112,7 @@ class Database:
     async def run_command(
         self,
         command: Document,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[RunCommandOptions],
     ) -> Document:
         command = self._codec.encode(command, optional=False)
@@ -125,7 +132,7 @@ class Database:
     async def aggregate(
         self,
         pipeline: Sequence[Document],
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **options: Unpack[AggregateOptions],
     ) -> Cursor[Document]:
         pipeline = [self._codec.encode(doc) for doc in pipeline]
@@ -151,7 +158,7 @@ class Database:
 
     async def drop(
         self,
-        session: Optional[ClientSession] = None,
+        session: ClientSession | None = None,
         **kwargs: Unpack[DropDatabaseOptions],
     ) -> None:
         options = self._codec.encode(kwargs)
@@ -166,17 +173,17 @@ class Database:
             )
 
     @property
-    def read_preference(self) -> Optional[ReadPreference]:
+    def read_preference(self) -> ReadPreference | None:
         data = self._core_database.read_preference()
         return self._codec.decode(data)
 
     @property
-    def write_concern(self) -> Optional[WriteConcern]:
+    def write_concern(self) -> WriteConcern | None:
         data = self._core_database.write_concern()
         return self._codec.decode(data)
 
     @property
-    def read_concern(self) -> Optional[ReadConcern]:
+    def read_concern(self) -> ReadConcern | None:
         data = self._core_database.read_concern()
         return self._codec.decode(data)
 

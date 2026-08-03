@@ -5,9 +5,9 @@ build-backend = "maturin"
 [project]
 name = "mongojet"
 description = "Async MongoDB client for Python"
-authors = [{name = "Roman Snegirev", email = "snegiryev@gmail.com"}]
+authors = [{ name = "Roman Snegirev", email = "snegiryev@gmail.com" }]
 readme = "README.md"
-license = {file = "LICENSE.txt"}
+license = { file = "LICENSE.txt" }
 requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -30,7 +30,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
 ]
 dynamic = ["version"]
-dependencies = ["pymongo>=4.6.2", "typing_extensions>=4.10.0",]
+dependencies = ["pymongo>=4.6.2", "typing_extensions>=4.10.0"]
 
 [project.urls]
 homepage = "https://github.com/romis2012/mongojet"
@@ -40,20 +40,52 @@ repository = "https://github.com/romis2012/mongojet"
 features = ["pyo3/extension-module"]
 python-source = "python"
 
-[tool.black]
-line-length = 88
-target-version = ["py39", "py310", "py311", "py312"]
-skip-string-normalization = true
-preview = true
-verbose = true
-
-[tool.flake8]
-max-line-length = 88
-ignore = "E203,W503"
-
 [tool.pytest.ini_options]
 asyncio_mode = "strict"
 asyncio_default_fixture_loop_scope = "session"
 
 
+[tool.mypy]
+allow_redefinition = true
+ignore_missing_imports = true
+disable_error_code = ["import-untyped", "no-redef"]
 
+# [[tool.mypy.overrides]]
+# module = "mongojet.mongojet"
+# ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 89
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",
+    "TD",
+    "CPY001", # missing-copyright-notice (CPY001)
+    "ANN401", # any-type (ANN401)
+    "FA100",  # future-rewritable-type-annotation (FA100)
+    "S101",   # assert (S101)
+    "COM812", # missing-trailing-comma (COM812),
+    "TRY003", # raise-vanilla-args (TRY003)
+    "EM101",  # raw-string-in-exception (EM101)
+    "EM102",  # f-string-in-exception (EM102)
+    "RET504", # unnecessary-assign (RET504)
+    "ERA001", # commented-out-code (ERA001)
+    "TC001",  # typing-only-first-party-import (TC001)
+    "TC002",  # typing-only-third-party-import (TC002)
+    "TC003",  # typing-only-standard-library-import (TC003)
+]
+
+fixable = ["ALL"]
+unfixable = [
+    "RET505", # superfluous-else-return (RET505)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "PLR2004", # magic-value-comparison (PLR2004)
+    "PT011", # pytest-raises-too-broad (PT011)
+    "C416", # unnecessary-comprehension (C416)
+]

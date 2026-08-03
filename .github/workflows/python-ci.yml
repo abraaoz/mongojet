@@ -35,10 +35,13 @@ jobs:
       - name: Build with maturin
         run: |
           maturin develop --release
-      - name: Lint with flake8
+      - name: Run Ruff Checks
         run: |
-          python -m flake8 python tests
-        continue-on-error: true
+          ruff check --output-format=github ./python/mongojet ./tests
+          ruff format --check ./python/mongojet ./tests
+      - name: Run Mypy Type Checker
+        run: |
+          mypy ./python/mongojet ./tests
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.1
         with:
@@ -46,7 +49,6 @@ jobs:
           mongodb-replica-set: rs1
           mongodb-port: 27117
       - name: Run tests
-        # run: python -m pytest tests
         # run: python -m pytest tests --cov=./python/mongojet --cov-report term-missing -s
         run: python -m pytest tests --cov=./python/mongojet --cov-report xml
       - name: Upload coverage

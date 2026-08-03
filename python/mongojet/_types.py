@@ -1,14 +1,13 @@
+from __future__ import annotations
+
+from collections.abc import Mapping, Sequence
 from enum import IntEnum
 from typing import (
-    TypedDict,
+    Any,
     Literal,
     Optional,
-    Sequence,
-    Mapping,
-    Any,
+    TypedDict,
     Union,
-    Tuple,
-    Dict,
 )
 
 try:
@@ -21,22 +20,22 @@ try:
 except ImportError:
     from typing_extensions import Unpack
 
-Document = Dict[str, Any]
+Document = dict[str, Any]
 
 ReadConcernLevel = Literal[
-    'local',
-    'majority',
-    'linearizable',
-    'available',
-    'snapshot',
+    "local",
+    "majority",
+    "linearizable",
+    "available",
+    "snapshot",
 ]
 
 ReadPreferenceMode = Literal[
-    'primary',
-    'secondary',
-    'primaryPreferred',
-    'secondaryPreferred',
-    'nearest',
+    "primary",
+    "secondary",
+    "primaryPreferred",
+    "secondaryPreferred",
+    "nearest",
 ]
 
 
@@ -45,9 +44,9 @@ class ReadConcern(TypedDict):
 
 
 class WriteConcern(TypedDict, total=False):
-    w: Optional[Union[int, Literal['majority']]]
-    wtimeout: Optional[int]
-    j: Optional[bool]
+    w: int | Literal["majority"] | None
+    wtimeout: int | None
+    j: bool | None
 
 
 class HedgedReadOptions(TypedDict):
@@ -56,27 +55,27 @@ class HedgedReadOptions(TypedDict):
 
 class ReadPreference(TypedDict, total=False):
     mode: Required[ReadPreferenceMode]
-    tagSets: Optional[Sequence[Mapping[str, Any]]]
-    maxStalenessSeconds: Optional[int]
-    hedge: Optional[HedgedReadOptions]
+    tagSets: Sequence[Mapping[str, Any]] | None
+    maxStalenessSeconds: int | None
+    hedge: HedgedReadOptions | None
 
 
 class DatabaseOptions(TypedDict, total=False):
-    read_concern: Optional[ReadConcern]
-    write_concern: Optional[WriteConcern]
-    read_preference: Optional[ReadPreference]
+    read_concern: ReadConcern | None
+    write_concern: WriteConcern | None
+    read_preference: ReadPreference | None
 
 
 class CollectionOptions(TypedDict, total=False):
-    read_concern: Optional[ReadConcern]
-    write_concern: Optional[WriteConcern]
-    read_preference: Optional[ReadPreference]
+    read_concern: ReadConcern | None
+    write_concern: WriteConcern | None
+    read_preference: ReadPreference | None
 
 
 CursorType = Literal[
-    'tailable',
-    'nonTailable',
-    'tailableAwait',
+    "tailable",
+    "nonTailable",
+    "tailableAwait",
 ]
 
 
@@ -88,201 +87,201 @@ class CollationStrength(IntEnum):
     IDENTICAL = 5
 
 
-CollationCaseFirst = Literal['upper', 'lower', 'off']
-CollationAlternate = Literal['non-ignorable', 'shifted']
-CollationMaxVariable = Literal['punct', 'space']
+CollationCaseFirst = Literal["upper", "lower", "off"]
+CollationAlternate = Literal["non-ignorable", "shifted"]
+CollationMaxVariable = Literal["punct", "space"]
 
 
 class Collation(TypedDict, total=False):
     locale: str
-    strength: Optional[CollationStrength]
-    caseLevel: Optional[bool]
-    caseFirst: Optional[CollationCaseFirst]
-    numericOrdering: Optional[bool]
-    alternate: Optional[CollationAlternate]
-    maxVariable: Optional[CollationMaxVariable]
-    normalization: Optional[bool]
-    backwards: Optional[bool]
+    strength: CollationStrength | None
+    caseLevel: bool | None
+    caseFirst: CollationCaseFirst | None
+    numericOrdering: bool | None
+    alternate: CollationAlternate | None
+    maxVariable: CollationMaxVariable | None
+    normalization: bool | None
+    backwards: bool | None
 
 
 class FindOptions(TypedDict, total=False):
-    sort: Optional[Document]
-    projection: Optional[Document]
-    skip: Optional[int]
-    limit: Optional[int]
-    cursor_type: Optional[CursorType]
-    no_cursor_timeout: Optional[bool]
-    allow_partial_results: Optional[bool]
-    batch_size: Optional[int]
-    max_time_ms: Optional[int]
-    allow_disk_use: Optional[bool]
-    max: Optional[Document]
-    min: Optional[Document]
-    hint: Optional[Union[str, Document]]
-    collation: Optional[Collation]
-    comment: Optional[Union[str, Document]]
-    max_await_time_ms: Optional[int]
-    max_scan: Optional[int]
-    read_concern: Optional[ReadConcern]
-    read_preference: Optional[ReadPreference]
-    return_key: Optional[bool]
-    show_record_id: Optional[bool]
-    let: Optional[Document]
+    sort: Document | None
+    projection: Document | None
+    skip: int | None
+    limit: int | None
+    cursor_type: CursorType | None
+    no_cursor_timeout: bool | None
+    allow_partial_results: bool | None
+    batch_size: int | None
+    max_time_ms: int | None
+    allow_disk_use: bool | None
+    max: Document | None
+    min: Document | None
+    hint: str | Document | None
+    collation: Collation | None
+    comment: str | Document | None
+    max_await_time_ms: int | None
+    max_scan: int | None
+    read_concern: ReadConcern | None
+    read_preference: ReadPreference | None
+    return_key: bool | None
+    show_record_id: bool | None
+    let: Document | None
 
 
 class FindOneOptions(TypedDict, total=False):
-    sort: Optional[Document]
-    projection: Optional[Document]
-    skip: Optional[int]
-    allow_partial_results: Optional[bool]
-    max_time_ms: Optional[int]
-    max: Optional[Document]
-    min: Optional[Document]
-    hint: Optional[Union[str, Document]]
-    collation: Optional[Collation]
-    comment: Optional[Union[str, Document]]
-    max_scan: Optional[int]
-    read_concern: Optional[ReadConcern]
-    read_preference: Optional[ReadPreference]
-    return_key: Optional[bool]
-    show_record_id: Optional[bool]
-    let: Optional[Document]
+    sort: Document | None
+    projection: Document | None
+    skip: int | None
+    allow_partial_results: bool | None
+    max_time_ms: int | None
+    max: Document | None
+    min: Document | None
+    hint: str | Document | None
+    collation: Collation | None
+    comment: str | Document | None
+    max_scan: int | None
+    read_concern: ReadConcern | None
+    read_preference: ReadPreference | None
+    return_key: bool | None
+    show_record_id: bool | None
+    let: Document | None
 
 
 class FindOneAndUpdateOptions(TypedDict, total=False):
-    sort: Optional[Document]
-    projection: Optional[Document]
-    upsert: Optional[bool]
-    return_document: Optional[Literal['after', 'before']]
-    array_filters: Optional[Sequence[Document]]
-    hint: Optional[Union[str, Document]]
-    collation: Optional[Collation]
-    bypass_document_validation: Optional[bool]
-    max_time_ms: Optional[int]
-    write_concern: Optional[WriteConcern]
-    let: Optional[Document]
-    comment: Optional[Any]
+    sort: Document | None
+    projection: Document | None
+    upsert: bool | None
+    return_document: Literal["after", "before"] | None
+    array_filters: Sequence[Document] | None
+    hint: str | Document | None
+    collation: Collation | None
+    bypass_document_validation: bool | None
+    max_time_ms: int | None
+    write_concern: WriteConcern | None
+    let: Document | None
+    comment: Any | None
 
 
 class FindOneAndReplaceOptions(TypedDict, total=False):
-    sort: Optional[Document]
-    projection: Optional[Document]
-    upsert: Optional[bool]
-    return_document: Optional[Literal['after', 'before']]
-    hint: Optional[Union[str, Document]]
-    collation: Optional[Collation]
-    bypass_document_validation: Optional[bool]
-    max_time_ms: Optional[int]
-    write_concern: Optional[WriteConcern]
-    let: Optional[Document]
-    comment: Optional[Any]
+    sort: Document | None
+    projection: Document | None
+    upsert: bool | None
+    return_document: Literal["after", "before"] | None
+    hint: str | Document | None
+    collation: Collation | None
+    bypass_document_validation: bool | None
+    max_time_ms: int | None
+    write_concern: WriteConcern | None
+    let: Document | None
+    comment: Any | None
 
 
 class FindOneAndDeleteOptions(TypedDict, total=False):
-    sort: Optional[Document]
-    projection: Optional[Document]
-    hint: Optional[Union[str, Document]]
-    collation: Optional[Collation]
-    max_time_ms: Optional[int]
-    write_concern: Optional[WriteConcern]
-    let: Optional[Document]
-    comment: Optional[Any]
+    sort: Document | None
+    projection: Document | None
+    hint: str | Document | None
+    collation: Collation | None
+    max_time_ms: int | None
+    write_concern: WriteConcern | None
+    let: Document | None
+    comment: Any | None
 
 
 class AggregateOptions(TypedDict, total=False):
-    bypass_document_validation: Optional[bool]
-    batch_size: Optional[int]
-    max_time_ms: Optional[int]
-    allow_disk_use: Optional[bool]
-    hint: Optional[Union[str, Document]]
-    collation: Optional[Collation]
-    comment: Optional[Union[str, Document]]
-    max_await_time_ms: Optional[int]
-    read_concern: Optional[ReadConcern]
-    read_preference: Optional[ReadPreference]
-    write_concern: Optional[WriteConcern]
-    let: Optional[Document]
+    bypass_document_validation: bool | None
+    batch_size: int | None
+    max_time_ms: int | None
+    allow_disk_use: bool | None
+    hint: str | Document | None
+    collation: Collation | None
+    comment: str | Document | None
+    max_await_time_ms: int | None
+    read_concern: ReadConcern | None
+    read_preference: ReadPreference | None
+    write_concern: WriteConcern | None
+    let: Document | None
 
 
 class UpdateOptions(TypedDict, total=False):
-    upsert: Optional[bool]
-    bypass_document_validation: Optional[bool]
-    collation: Optional[Collation]
-    array_filters: Optional[Sequence[Document]]
-    hint: Optional[Union[str, Document]]
-    write_concern: Optional[WriteConcern]
-    let: Optional[Document]
-    comment: Optional[Any]
+    upsert: bool | None
+    bypass_document_validation: bool | None
+    collation: Collation | None
+    array_filters: Sequence[Document] | None
+    hint: str | Document | None
+    write_concern: WriteConcern | None
+    let: Document | None
+    comment: Any | None
 
 
 class ReplaceOptions(TypedDict, total=False):
-    upsert: Optional[bool]
-    bypass_document_validation: Optional[bool]
-    collation: Optional[Collation]
-    hint: Optional[Union[str, Document]]
-    write_concern: Optional[WriteConcern]
-    let: Optional[Document]
-    comment: Optional[Any]
+    upsert: bool | None
+    bypass_document_validation: bool | None
+    collation: Collation | None
+    hint: str | Document | None
+    write_concern: WriteConcern | None
+    let: Document | None
+    comment: Any | None
 
 
 class InsertOneOptions(TypedDict, total=False):
-    bypass_document_validation: Optional[bool]
-    write_concern: Optional[WriteConcern]
-    comment: Optional[Any]
+    bypass_document_validation: bool | None
+    write_concern: WriteConcern | None
+    comment: Any | None
 
 
 class InsertManyOptions(TypedDict, total=False):
-    ordered: Optional[bool]
-    bypass_document_validation: Optional[bool]
-    write_concern: Optional[WriteConcern]
-    comment: Optional[Any]
+    ordered: bool | None
+    bypass_document_validation: bool | None
+    write_concern: WriteConcern | None
+    comment: Any | None
 
 
 class DeleteOptions(TypedDict, total=False):
-    collation: Optional[Collation]
-    hint: Optional[Union[str, Document]]
-    write_concern: Optional[WriteConcern]
-    let: Optional[Document]
-    comment: Optional[Any]
+    collation: Collation | None
+    hint: str | Document | None
+    write_concern: WriteConcern | None
+    let: Document | None
+    comment: Any | None
 
 
 class CountOptions(TypedDict, total=False):
-    skip: Optional[int]
-    limit: Optional[int]
-    max_time_ms: Optional[int]
-    hint: Optional[Union[str, Document]]
-    collation: Optional[Collation]
-    read_preference: Optional[ReadPreference]
-    read_concern: Optional[ReadConcern]
-    comment: Optional[Any]
+    skip: int | None
+    limit: int | None
+    max_time_ms: int | None
+    hint: str | Document | None
+    collation: Collation | None
+    read_preference: ReadPreference | None
+    read_concern: ReadConcern | None
+    comment: Any | None
 
 
 class EstimatedCountOptions(TypedDict, total=False):
-    max_time_ms: Optional[int]
-    read_preference: Optional[ReadPreference]
-    read_concern: Optional[ReadConcern]
-    comment: Optional[Any]
+    max_time_ms: int | None
+    read_preference: ReadPreference | None
+    read_concern: ReadConcern | None
+    comment: Any | None
 
 
 class DistinctOptions(TypedDict, total=False):
-    max_time_ms: Optional[int]
-    read_preference: Optional[ReadPreference]
-    read_concern: Optional[ReadConcern]
-    collation: Optional[Collation]
-    comment: Optional[Any]
+    max_time_ms: int | None
+    read_preference: ReadPreference | None
+    read_concern: ReadConcern | None
+    collation: Collation | None
+    comment: Any | None
 
 
 class TransactionOptions(TypedDict, total=False):
-    read_concern: Optional[ReadConcern]
-    write_concern: Optional[WriteConcern]
-    read_preference: Optional[ReadPreference]
-    max_commit_time_ms: Optional[int]
+    read_concern: ReadConcern | None
+    write_concern: WriteConcern | None
+    read_preference: ReadPreference | None
+    max_commit_time_ms: int | None
 
 
 class SessionOptions(TypedDict, total=False):
-    causal_consistency: Optional[bool]
-    default_transaction_options: Optional[TransactionOptions]
-    snapshot: Optional[bool]
+    causal_consistency: bool | None
+    default_transaction_options: TransactionOptions | None
+    snapshot: bool | None
 
 
 class UpdateResult(TypedDict):
@@ -304,29 +303,29 @@ class DeleteResult(TypedDict):
 
 
 CommitQuorum = Union[
-    Literal['votingMembers', 'majority'],
+    Literal["votingMembers", "majority"],  # noqa: PYI051
     str,  # replica set tag name
     int,  # nodes
 ]
 
 
 class CreateIndexOptions(TypedDict, total=False):
-    maxTimeMS: Optional[int]
-    comment: Optional[Any]  # Document | str
-    writeConcern: Optional[WriteConcern]
-    commitQuorum: Optional[CommitQuorum]
+    maxTimeMS: int | None
+    comment: Any | None  # Document | str
+    writeConcern: WriteConcern | None
+    commitQuorum: CommitQuorum | None
 
 
 class DropIndexOptions(TypedDict, total=False):
-    maxTimeMS: Optional[int]
-    comment: Optional[Any]  # Document | str
-    writeConcern: Optional[WriteConcern]
+    maxTimeMS: int | None
+    comment: Any | None  # Document | str
+    writeConcern: WriteConcern | None
 
 
 class ListIndexesOptions(TypedDict, total=False):
-    maxTimeMS: Optional[int]
-    comment: Optional[Any]  # Document | str
-    batchSize: Optional[int]
+    maxTimeMS: int | None
+    comment: Any | None  # Document | str
+    batchSize: int | None
 
 
 class IndexKeysDef(TypedDict):
@@ -334,30 +333,32 @@ class IndexKeysDef(TypedDict):
 
 
 IndexOptionsDef = TypedDict(
-    'IndexOptionsDef',
+    "IndexOptionsDef",
     {
-        'name': Optional[str],
-        'unique': Optional[bool],
-        'background': Optional[bool],
-        'expireAfterSeconds': Optional[int],
-        'sparse': Optional[bool],
-        'storageEngine': Optional[Document],
-        'v': Optional[int],
-        'default_language': Optional[str],
-        'language_override': Optional[str],
-        'textIndexVersion': Optional[int],
-        'weights': Optional[Document],
-        '2dsphereIndexVersion': Optional[int],  # or sphere2dIndexVersion
-        'bits': Optional[int],
-        'min': Optional[int],
-        'max': Optional[int],
-        'bucketSize': Optional[int],
-        'partialFilterExpression': Optional[Document],
-        'collation': Optional[Collation],
-        'wildcardProjection': Optional[Document],
-        'hidden': Optional[bool],
-        'clustered': Optional[bool],
+        "name": Optional[str],
+        "unique": Optional[bool],
+        "background": Optional[bool],
+        "expireAfterSeconds": Optional[int],
+        "sparse": Optional[bool],
+        "storageEngine": Optional[Document],
+        "v": Optional[int],
+        "default_language": Optional[str],
+        "language_override": Optional[str],
+        "textIndexVersion": Optional[int],
+        "weights": Optional[Document],
+        "sphere2dIndexVersion": Optional[int],
+        "2dsphereIndexVersion": Optional[int],
+        "bits": Optional[int],
+        "min": Optional[int],
+        "max": Optional[int],
+        "bucketSize": Optional[int],
+        "partialFilterExpression": Optional[Document],
+        "collation": Optional[Collation],
+        "wildcardProjection": Optional[Document],
+        "hidden": Optional[bool],
+        "clustered": Optional[bool],
     },
+    total=False,
 )
 
 
@@ -378,7 +379,7 @@ class CreateIndexesResult(TypedDict):
 
 
 IndexList = Union[
-    Sequence[Union[str, Tuple[str, Union[int, str, Mapping[str, Any]]]]],
+    Sequence[Union[str, tuple[str, Union[int, str, Mapping[str, Any]]]]],
     Mapping[str, Any],
 ]
 Sort = IndexList
@@ -387,12 +388,10 @@ IndexKeys = Union[str, IndexList]
 
 
 class IndexModel:
-
     __slots__ = ("__document",)
 
     def __init__(self, keys: IndexKeys, **kwargs: Unpack[IndexOptionsDef]) -> None:
-        # pylint:disable-next=import-outside-toplevel
-        from ._helpers import create_index_model
+        from ._helpers import create_index_model  # noqa: PLC0415
 
         self.__document = create_index_model(keys, **kwargs)
 
@@ -402,7 +401,7 @@ class IndexModel:
 
 
 class DropCollectionOptions(TypedDict, total=False):
-    write_concern: Optional[WriteConcern]
+    write_concern: WriteConcern | None
 
 
 class IndexOptionDefaults(TypedDict):
@@ -411,10 +410,10 @@ class IndexOptionDefaults(TypedDict):
 
 class TimeseriesOptions(TypedDict, total=False):
     timeField: str
-    metaField: Optional[str]
-    granularity: Optional[Literal['seconds', 'minutes', 'hours']]
-    bucketMaxSpanSeconds: Optional[int]
-    bucketRoundingSeconds: Optional[int]
+    metaField: str | None
+    granularity: Literal["seconds", "minutes", "hours"] | None
+    bucketMaxSpanSeconds: int | None
+    bucketRoundingSeconds: int | None
 
 
 class ChangeStreamPreAndPostImages(TypedDict):
@@ -424,58 +423,53 @@ class ChangeStreamPreAndPostImages(TypedDict):
 class ClusteredIndex(TypedDict, total=False):
     key: Document
     unique: bool
-    name: Optional[str]
-    v: Optional[int]  # currently must be 2 if provided.
+    name: str | None
+    v: int | None  # currently must be 2 if provided.
 
 
 class CreateCollectionOptions(TypedDict, total=False):
-    capped: Optional[bool]
-    size: Optional[int]
-    max: Optional[int]
-    storageEngine: Optional[Document]
-    validator: Optional[Document]
-    validationLevel: Optional[Literal['off', 'strict', 'moderate']]
-    validationAction: Optional[Literal['error', 'warn']]
-    viewOn: Optional[str]
-    pipeline: Optional[Sequence[Document]]
-    collation: Optional[Collation]
-    writeConcern: Optional[WriteConcern]
-    indexOptionDefaults: Optional[IndexOptionDefaults]
-    timeseries: Optional[TimeseriesOptions]
-    expireAfterSeconds: Optional[int]
-    changeStreamPreAndPostImages: Optional[ChangeStreamPreAndPostImages]
-    clusteredIndex: Optional[ClusteredIndex]
-    comment: Optional[Any]
+    capped: bool | None
+    size: int | None
+    max: int | None
+    storageEngine: Document | None
+    validator: Document | None
+    validationLevel: Literal["off", "strict", "moderate"] | None
+    validationAction: Literal["error", "warn"] | None
+    viewOn: str | None
+    pipeline: Sequence[Document] | None
+    collation: Collation | None
+    writeConcern: WriteConcern | None
+    indexOptionDefaults: IndexOptionDefaults | None
+    timeseries: TimeseriesOptions | None
+    expireAfterSeconds: int | None
+    changeStreamPreAndPostImages: ChangeStreamPreAndPostImages | None
+    clusteredIndex: ClusteredIndex | None
+    comment: Any | None
 
 
 class ListCollectionsOptions(TypedDict, total=False):
-    batchSize: Optional[int]
-    comment: Optional[Any]
+    batchSize: int | None
+    comment: Any | None
 
 
 class CollectionSpecification(TypedDict, total=False):
     name: str
-    type: Literal['collection', 'view', 'timeseries']
+    type: Literal["collection", "view", "timeseries"]
     options: CreateCollectionOptions
     info: dict
-    idIndex: Optional[Document]
+    idIndex: Document | None
 
 
 class RunCommandOptions(TypedDict, total=False):
-    read_preference: Optional[ReadPreference]
+    read_preference: ReadPreference | None
 
 
 class GridFsBucketOptions(TypedDict, total=False):
-    bucket_name: Optional[str]
-    chunk_size_bytes: Optional[int]
-    write_concern: Optional[WriteConcern]
-    read_concern: Optional[ReadConcern]
-    read_preference: Optional[ReadPreference]
-
-
-# class GridFsPutOptions(TypedDict, total=False):
-#     file_id: Optional[Any]
-#     filename: Optional[str]
+    bucket_name: str | None
+    chunk_size_bytes: int | None
+    write_concern: WriteConcern | None
+    read_concern: ReadConcern | None
+    read_preference: ReadPreference | None
 
 
 class GridFsPutResult(TypedDict, total=False):
@@ -483,4 +477,4 @@ class GridFsPutResult(TypedDict, total=False):
 
 
 class DropDatabaseOptions(TypedDict, total=False):
-    write_concern: Optional[WriteConcern]
+    write_concern: WriteConcern | None
