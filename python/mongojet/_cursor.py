@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import deque
 from collections.abc import AsyncIterator
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from bson import CodecOptions
 
@@ -13,11 +13,18 @@ except ImportError:
 
 from ._codec import Codec
 
+if TYPE_CHECKING:
+    from .mongojet import CoreBatchCursor, CoreSessionBatchCursor
+
 T = TypeVar("T")
 
 
 class Cursor(AsyncIterator[T]):
-    def __init__(self, core_cursor: Any, codec_options: CodecOptions) -> None:
+    def __init__(
+        self,
+        core_cursor: CoreBatchCursor | CoreSessionBatchCursor,
+        codec_options: CodecOptions,
+    ) -> None:
         self._core_cursor = core_cursor
         self._codec = Codec(options=codec_options)
         self._buff: deque[T] = deque()

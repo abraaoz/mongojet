@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from types import TracebackType
-from typing import Any
+from typing import TYPE_CHECKING
 
 from bson import CodecOptions
 
@@ -18,9 +18,12 @@ except ImportError:
 from ._codec import Codec
 from ._types import TransactionOptions
 
+if TYPE_CHECKING:
+    from .mongojet import CoreSession
+
 
 class ClientSession:
-    def __init__(self, core_session: Any, codec_options: CodecOptions) -> None:
+    def __init__(self, core_session: CoreSession, codec_options: CodecOptions) -> None:
         self._core_session = core_session
         self._codec = Codec(options=codec_options)
 
@@ -38,7 +41,7 @@ class ClientSession:
         await self._core_session.abort_transaction()
 
     @property
-    def core_session(self) -> Any:
+    def core_session(self) -> CoreSession:
         return self._core_session
 
 

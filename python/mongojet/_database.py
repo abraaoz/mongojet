@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, cast
 
 try:
     from typing import Unpack  # type:ignore[attr-defined]
@@ -33,13 +33,14 @@ from ._types import (
 if TYPE_CHECKING:
     from ._client import Client
     from ._session import ClientSession
+    from .mongojet import CoreDatabase
 
 
 # noinspection PyShadowingBuiltins
 class Database:
     def __init__(
         self,
-        core_database: Any,
+        core_database: CoreDatabase,
         codec_options: CodecOptions,
         client: Client,
     ) -> None:
@@ -107,7 +108,7 @@ class Database:
                 options,
             )
 
-        return [self._codec.decode(d) for d in result]
+        return [cast("CollectionSpecification", self._codec.decode(d)) for d in result]
 
     async def run_command(
         self,
@@ -175,17 +176,17 @@ class Database:
     @property
     def read_preference(self) -> ReadPreference | None:
         data = self._core_database.read_preference()
-        return self._codec.decode(data)
+        return cast("ReadPreference | None", self._codec.decode(data))
 
     @property
     def write_concern(self) -> WriteConcern | None:
         data = self._core_database.write_concern()
-        return self._codec.decode(data)
+        return cast("WriteConcern | None", self._codec.decode(data))
 
     @property
     def read_concern(self) -> ReadConcern | None:
         data = self._core_database.read_concern()
-        return self._codec.decode(data)
+        return cast("ReadConcern | None", self._codec.decode(data))
 
     @property
     def name(self) -> str:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import Any
+from typing import TYPE_CHECKING
 
 from bson import CodecOptions
 
@@ -17,6 +17,9 @@ from ._database import Database
 from ._session import ClientSession
 from ._types import DatabaseOptions, SessionOptions
 
+if TYPE_CHECKING:
+    from .mongojet import CoreClient
+
 
 async def create_client(url: str, tz_aware: bool = True) -> Client:  # noqa: FBT001, FBT002
     core_client = await core_create_client(url=url)
@@ -24,7 +27,7 @@ async def create_client(url: str, tz_aware: bool = True) -> Client:  # noqa: FBT
 
 
 class Client:
-    def __init__(self, core_client: Any, codec_options: CodecOptions) -> None:
+    def __init__(self, core_client: CoreClient, codec_options: CodecOptions) -> None:
         self._codec_options = codec_options
         self._codec = Codec(options=codec_options)
         self._core_client = core_client
@@ -46,6 +49,8 @@ class Client:
             )
         else:
             core_database = self._core_client.get_default_database()
+            if core_database is None:
+                raise ValueError("No default database name defined or provided.")
 
         return Database(
             core_database,

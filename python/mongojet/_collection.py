@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 try:
     from typing import Unpack  # type:ignore[attr-defined]
@@ -51,13 +51,14 @@ from ._types import (
 
 if TYPE_CHECKING:
     from ._database import Database
+    from .mongojet import CoreCollection
 
 
 # noinspection PyShadowingBuiltins
 class Collection:
     def __init__(
         self,
-        core_collection: Any,
+        core_collection: CoreCollection,
         codec_options: CodecOptions,
         database: Database,
     ) -> None:
@@ -260,7 +261,7 @@ class Collection:
                 update,
                 options,
             )
-        return self._codec.decode(result)
+        return cast("UpdateResult", self._codec.decode(result))
 
     async def update_many(
         self,
@@ -291,7 +292,7 @@ class Collection:
                 update,
                 options,
             )
-        return self._codec.decode(result)
+        return cast("UpdateResult", self._codec.decode(result))
 
     async def insert_one(
         self,
@@ -318,7 +319,7 @@ class Collection:
                 options,
             )
 
-        return self._codec.decode(result)
+        return cast("InsertOneResult", self._codec.decode(result))
 
     async def insert_many(
         self,
@@ -346,7 +347,7 @@ class Collection:
                 options,
             )
 
-        return self._codec.decode(result)
+        return cast("InsertManyResult", self._codec.decode(result))
 
     async def replace_one(
         self,
@@ -373,7 +374,7 @@ class Collection:
                 options,
             )
 
-        return self._codec.decode(result)
+        return cast("UpdateResult", self._codec.decode(result))
 
     async def delete_one(
         self,
@@ -396,7 +397,7 @@ class Collection:
                 options,
             )
 
-        return self._codec.decode(result)
+        return cast("DeleteResult", self._codec.decode(result))
 
     async def delete_many(
         self,
@@ -419,7 +420,7 @@ class Collection:
                 options,
             )
 
-        return self._codec.decode(result)
+        return cast("DeleteResult", self._codec.decode(result))
 
     async def count_documents(
         self,
@@ -511,7 +512,7 @@ class Collection:
                 self._codec.encode(options),
             )
 
-        return self._codec.decode(result)
+        return cast("CreateIndexResult", self._codec.decode(result))
 
     async def create_indexes(
         self,
@@ -535,7 +536,7 @@ class Collection:
                 options,
             )
 
-        return self._codec.decode(result)
+        return cast("CreateIndexesResult", self._codec.decode(result))
 
     async def drop_index(
         self,
@@ -594,7 +595,7 @@ class Collection:
                 options,
             )
 
-        return [self._codec.decode(doc) for doc in docs]
+        return [cast("IndexModelDef", self._codec.decode(doc)) for doc in docs]
 
     async def drop(
         self,
@@ -617,17 +618,17 @@ class Collection:
     @property
     def read_preference(self) -> ReadPreference | None:
         data = self._core_collection.read_preference()
-        return self._codec.decode(data)
+        return cast("ReadPreference | None", self._codec.decode(data))
 
     @property
     def write_concern(self) -> WriteConcern | None:
         data = self._core_collection.write_concern()
-        return self._codec.decode(data)
+        return cast("WriteConcern | None", self._codec.decode(data))
 
     @property
     def read_concern(self) -> ReadConcern | None:
         data = self._core_collection.read_concern()
-        return self._codec.decode(data)
+        return cast("ReadConcern | None", self._codec.decode(data))
 
     @property
     def name(self) -> str:
