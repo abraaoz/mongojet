@@ -1,4 +1,6 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
 
 from bson import CodecOptions
 
@@ -6,17 +8,22 @@ from ._codec import Codec
 from ._types import GridFsPutResult
 from .mongojet import DuplicateKeyError, FileExists
 
+if TYPE_CHECKING:
+    from .mongojet import CoreGridFsBucket
+
 
 class GridfsBucket:
-    def __init__(self, core_bucket: Any, codec_options: CodecOptions) -> None:
+    def __init__(
+        self, core_bucket: CoreGridFsBucket, codec_options: CodecOptions
+    ) -> None:
         self._core_bucket = core_bucket
         self._codec = Codec(codec_options)
 
     async def put(
         self,
         data: bytes,
-        filename: Optional[str] = None,
-        file_id: Optional[Any] = None,
+        filename: str | None = None,
+        file_id: Any | None = None,
         **metadata: Any,
     ) -> GridFsPutResult:
 
@@ -35,7 +42,7 @@ class GridfsBucket:
         except DuplicateKeyError as e:
             raise FileExists(e) from e
         else:
-            return self._codec.decode(result)
+            return cast("GridFsPutResult", self._codec.decode(result))
 
     async def get_by_id(self, file_id: Any) -> bytes:
         options = {"file_id": file_id}
