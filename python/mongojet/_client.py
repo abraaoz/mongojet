@@ -18,7 +18,7 @@ from ._session import ClientSession
 from ._types import DatabaseOptions, SessionOptions
 
 if TYPE_CHECKING:
-    from .mongojet import CoreClient
+    from .mongojet import CoreClient, CoreDatabase
 
 
 async def create_client(url: str, tz_aware: bool = True) -> Client:  # noqa: FBT001, FBT002
@@ -41,6 +41,8 @@ class Client:
         default_database = self._core_client.default_database_name
         if default_database is None:
             raise ValueError("No default database name defined or provided.")
+
+        core_database: CoreDatabase | None
 
         if options:
             core_database = self._core_client.get_database_with_options(

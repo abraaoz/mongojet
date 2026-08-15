@@ -51,7 +51,7 @@ from ._types import (
 
 if TYPE_CHECKING:
     from ._database import Database
-    from .mongojet import CoreCollection
+    from .mongojet import CoreBatchCursor, CoreCollection, CoreSessionBatchCursor
 
 
 # noinspection PyShadowingBuiltins
@@ -97,26 +97,27 @@ class Collection:
         session: ClientSession | None = None,
         **options: Unpack[FindOneAndUpdateOptions],
     ) -> Document | None:
-        filter = self._codec.encode(filter, optional=False)
+        encoded_update: bytes | list[bytes]
 
         if isinstance(update, Sequence):
-            update = [self._codec.encode(doc) for doc in update]  # type:ignore[misc]
+            encoded_update = [self._codec.encode(doc) for doc in update]
         else:
-            update = self._codec.encode(update, optional=False)  # type:ignore[assignment]
+            encoded_update = self._codec.encode(update, optional=False)
 
+        filter = self._codec.encode(filter, optional=False)
         options = self._codec.encode(options)
 
         if session is None:
             result = await self._core_collection.find_one_and_update(
                 filter,
-                update,
+                encoded_update,
                 options,
             )
         else:
             result = await self._core_collection.find_one_and_update_with_session(
                 session.core_session,
                 filter,
-                update,
+                encoded_update,
                 options,
             )
 
@@ -181,6 +182,8 @@ class Collection:
         filter = self._codec.encode(filter)
         options = self._codec.encode(options)
 
+        cur: CoreBatchCursor | CoreSessionBatchCursor
+
         if session is None:
             cur = await self._core_collection.find(filter, options)
         else:
@@ -221,6 +224,8 @@ class Collection:
         pipeline = [self._codec.encode(doc) for doc in pipeline]
         options = self._codec.encode(options)
 
+        cur: CoreBatchCursor | CoreSessionBatchCursor
+
         if session is None:
             cur = await self._core_collection.aggregate(pipeline, options)
         else:
@@ -239,26 +244,27 @@ class Collection:
         session: ClientSession | None = None,
         **options: Unpack[UpdateOptions],
     ) -> UpdateResult:
-        filter = self._codec.encode(filter, optional=False)
+        encoded_update: bytes | list[bytes]
 
         if isinstance(update, Sequence):
-            update = [self._codec.encode(doc) for doc in update]  # type:ignore[misc]
+            encoded_update = [self._codec.encode(doc) for doc in update]
         else:
-            update = self._codec.encode(update, optional=False)  # type:ignore[assignment]
+            encoded_update = self._codec.encode(update, optional=False)
 
+        filter = self._codec.encode(filter, optional=False)
         options = self._codec.encode(options)
 
         if session is None:
             result = await self._core_collection.update_one(
                 filter,
-                update,
+                encoded_update,
                 options,
             )
         else:
             result = await self._core_collection.update_one_with_session(
                 session.core_session,
                 filter,
-                update,
+                encoded_update,
                 options,
             )
         return cast("UpdateResult", self._codec.decode(result))
@@ -270,26 +276,27 @@ class Collection:
         session: ClientSession | None = None,
         **options: Unpack[UpdateOptions],
     ) -> UpdateResult:
-        filter = self._codec.encode(filter, optional=False)
+        encoded_update: bytes | list[bytes]
 
         if isinstance(update, Sequence):
-            update = [self._codec.encode(doc) for doc in update]  # type:ignore[misc]
+            encoded_update = [self._codec.encode(doc) for doc in update]
         else:
-            update = self._codec.encode(update, optional=False)  # type:ignore[assignment]
+            encoded_update = self._codec.encode(update, optional=False)
 
+        filter = self._codec.encode(filter, optional=False)
         options = self._codec.encode(options)
 
         if session is None:
             result = await self._core_collection.update_many(
                 filter,
-                update,
+                encoded_update,
                 options,
             )
         else:
             result = await self._core_collection.update_many_with_session(
                 session.core_session,
                 filter,
-                update,
+                encoded_update,
                 options,
             )
         return cast("UpdateResult", self._codec.decode(result))
