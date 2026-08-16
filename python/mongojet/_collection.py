@@ -501,7 +501,7 @@ class Collection:
         if "comment" in kwargs:
             options["comment"] = kwargs.pop("comment")
         if "writeConcern" in kwargs:
-            options["commitQuorum"] = kwargs.pop("commitQuorum")
+            options["writeConcern"] = kwargs.pop("writeConcern")
         if "commitQuorum" in kwargs:
             options["commitQuorum"] = kwargs.pop("commitQuorum")
 
