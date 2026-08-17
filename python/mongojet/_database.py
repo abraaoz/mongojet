@@ -33,7 +33,7 @@ from ._types import (
 if TYPE_CHECKING:
     from ._client import Client
     from ._session import ClientSession
-    from .mongojet import CoreDatabase
+    from .mongojet import CoreBatchCursor, CoreDatabase, CoreSessionBatchCursor
 
 
 # noinspection PyShadowingBuiltins
@@ -139,6 +139,7 @@ class Database:
         pipeline = [self._codec.encode(doc) for doc in pipeline]
         options = self._codec.encode(options)
 
+        cur: CoreBatchCursor | CoreSessionBatchCursor
         if session is None:
             cur = await self._core_database.aggregate(pipeline, options)
         else:
